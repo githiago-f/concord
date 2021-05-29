@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+    <%= room.subject %> | Room
+  </title>
+  <script>
+    const ROOM_ID = '<%= room.id %>';
+    const room = {
+      attendees: new Set(
+        JSON.parse(
+          '<%=JSON.stringify(attendees)%>'.replace(/\&\#34\;/gi, '"')
+        )
+      )
+    }
+  </script>
+</head>
+
+<body>
+
+  <h4>Room <%= room.subject %>
+  </h4>
+
+  <div id="attendees"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/room.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All rooms</title>
+</head>
+
+<body>
+  <div>
+    <%if(message){%>
+      <div class="alert alert-warning">
+        <%= message%>
+      </div>
+      <% } %>
+  </div>
+  <h2> Select a room and participate!
+  </h2>
+  <div id="rooms">
+    <% for( const room of rooms) { %>
+      <a href="/rooms/<%=room.id%>">
+        <%= room.subject %>
+      </a><br />
+      <% } %>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/rooms.js"></script>
+</body>
+
+</html>
