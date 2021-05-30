@@ -1,4 +1,6 @@
 import { Room } from "../entity/Room";
+import { Either } from "../utils/Either";
+import { NotFound } from "./errors/NotFound";
 
 export class RoomRepositoryOnMemory {
   public static readonly repository = new RoomRepositoryOnMemory();
@@ -8,18 +10,18 @@ export class RoomRepositoryOnMemory {
   }
 
   add(room: Room) {
-    if(this.rooms.has(room.id)) {
+    if (this.rooms.has(room.id)) {
       return this.rooms.get(room.id);
     }
     this.rooms.set(room.id, room);
     return this.rooms.get(room.id);
   }
 
-  findOne(roomId: string) {
-    if(this.rooms.has(roomId)) {
-      return this.rooms.get(roomId);
+  findOne(roomId: string): Either<NotFound, Room> {
+    if (!this.has(roomId)) {
+      return Either.left(new NotFound('Room not found'));
     }
-    return { message: 'Not found!' };
+    return Either.right(this.rooms.get(roomId));
   }
 
   all() { return Array.from(this.rooms.values()); }

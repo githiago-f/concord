@@ -40,5 +40,7 @@ export class SocketController {
     this.socket.to(roomId).emit('leftedRoom', room.allAttendees);
   }
 
-  sendMessage() {}
+  sendMessage(roomId: string, message: { text: string }) {
+    this.socket.to(roomId).emit('message', message);
+  }
 }

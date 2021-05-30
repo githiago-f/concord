@@ -14,7 +14,7 @@ export class RoomsController implements Controller {
 
     this.rooms = RoomRepositoryOnMemory.repository;
   }
-  get ctx() {return this.router}
+  get ctx() { return this.router }
 
   private listRooms(request: Request, response: Response) {
     response.render('rooms', {
@@ -24,23 +24,26 @@ export class RoomsController implements Controller {
   }
 
   private async createRoom(request: Request, response: Response) {
-    const room = this.rooms.add(
-      new Room(request.body)
-    );
-    this.server.sockets.emit('loadRooms', this.rooms.all());
-    return response.status(201).redirect(`/rooms/${room.id}`);
+    Room.create(request.body)
+      .right((room) => {
+        this.rooms.add(room);
+        this.server.sockets.emit('loadRooms', this.rooms.all());
+        return response.status(201).redirect(`/rooms/${room.id}`);
+      })
+      .left((e) => response.status(e.code).json(e));
   }
 
   private goToRoom(request: Request, response: Response) {
-    const {room} = request.params;
-    const roomLoaded = this.rooms.findOne(room);
-    if(!(roomLoaded instanceof Room)) {
-      return response.status(404)
-        .redirect('/rooms?message=Room not found!');
-    }
-    return response.render('room',{
-      room: roomLoaded,
-      attendees: roomLoaded.allAttendees
-    });
+    const { room } = request.params;
+    this.rooms.findOne(room)
+      .right(room => {
+        return response.render('room', {
+          room,
+          attendees: room.allAttendees
+        })
+      }).left(e => {
+        return response.status(e.code)
+          .redirect('/rooms?message=' + e.code)
+      });
   }
 }

@@ -17,11 +17,11 @@ export class AttendeeController implements Controller {
   }
 
   private createAttendee(request: Request, response: Response) {
-    const attendee = new Attendee(request.body);
-    this.attendees.create(attendee);
-    return response.status(201).json({
-      message: 'Created successfuly!',
-      attendee
-    });
+    Attendee.create(request.body)
+      .right((attendee) => {
+        this.attendees.create(attendee);
+        response.json(attendee);
+      })
+      .left((e) => response.status(422).json(e));
   }
 }
