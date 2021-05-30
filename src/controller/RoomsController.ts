@@ -41,9 +41,6 @@ export class RoomsController implements Controller {
           room,
           attendees: room.allAttendees
         })
-      }).left(e => {
-        return response.status(e.code)
-          .redirect('/rooms?message=' + e.code)
-      });
+      }).left(e => response.status(e.code).redirect('/rooms?message=' + e.message));
   }
 }

@@ -9,23 +9,63 @@
     <%= room.subject %> | Room
   </title>
   <script>
-    const ROOM_ID = '<%= room.id %>';
-    const room = {
-      attendees: new Set(
-        JSON.parse(
-          '<%=JSON.stringify(attendees)%>'.replace(/\&\#34\;/gi, '"')
-        )
-      )
-    }
+
+  window.ROOM_ID = '<%= room.id %>';
+  const data = '<%=JSON.stringify(attendees)%>'.replace(/\&\#34\;/gi, '"');
+  const room = {
+    id: window.ROOM_ID,
+    attendees: new Set(JSON.parse(data)),
+    messages: []
+  }
   </script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    #attendees {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    #attendees div {
+      margin: 0px 15px;
+    }
+
+    #messages {
+      border: 1px solid #000;
+      padding: 8px;
+      height: 600px;
+    }
+
+    .container div {
+      max-width: 600px;
+      margin: auto;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 1rem;
+    }
+  </style>
 </head>
 
 <body>
+  <div class="container">
+    <div>
+      <h4>
+        Room <%= room.subject %> | messages
+      </h4>
+    </div>
+    <div id="attendees"></div>
+    <div id="messages"></div>
 
-  <h4>Room <%= room.subject %>
-  </h4>
-
-  <div id="attendees"></div>
+    <div>
+      <textarea name="message" id="message" rows="3"></textarea>
+      <input type="button" id="sendMessage" value="send" />
+    </div>
+    </div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="/room.js"></script>
