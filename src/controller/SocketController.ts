@@ -1,12 +1,10 @@
 import { Socket } from "socket.io";
 import { Attendee } from "../entity/Attendee";
-import { AttendeeRepository } from "../repository/AttendeeRepository";
 import { NotFound } from "../repository/errors/NotFound";
 import { RoomRepositoryOnMemory } from "../repository/RoomRepository";
 
 export class SocketController {
   private rooms: RoomRepositoryOnMemory;
-  private attendees: AttendeeRepository;
 
   constructor(private socket: Socket) {
     socket.on('joinRoom', this.joinRoom.bind(this));
@@ -14,7 +12,6 @@ export class SocketController {
     socket.on('sendMessage', this.sendMessage.bind(this));
 
     this.rooms = RoomRepositoryOnMemory.repository;
-    this.attendees = AttendeeRepository.repository;
   }
 
   private noRoom(e: NotFound) {
@@ -27,7 +24,6 @@ export class SocketController {
         this.socket.join(room.id);
         Attendee.create({...data, id: this.socket.id })
           .right(attendee => {
-            this.attendees.create(attendee);
             room.addAttendee(attendee);
             this.socket.to(roomId).emit('joinedRoom', room.allAttendees);
           });
